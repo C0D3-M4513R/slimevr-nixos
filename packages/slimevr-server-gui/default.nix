@@ -102,6 +102,11 @@ rustPlatform.buildRustPackage rec {
   preInstall = ''
     mkdir -p $out/jar
     cp ${jar} $out/jar/slimevr.jar
+    mkdir -p $out/share/applications
+    mkdir -p $out/icon
+    cp ${src}/gui/src-tauri/icons/icon.svg $out/icon
+    cp ${src}/gui/src-tauri/dev.slimevr.SlimeVR.desktop $out/share/applications/
+    sed -i $out/share/applications/dev.slimevr.SlimeVR.desktop -e "s|{{exec}}|$out/bin/slimevr|" -e "s|{{icon}}|$out/icon/icon.svg|"
   '';
   
   postFixup = let 
