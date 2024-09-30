@@ -4,7 +4,7 @@ stdenv
 , fetchFromGitHub
 , fetchurl
 , autoPatchelfHook
-, makeWrapper
+, makeBinaryWrapper
 , gradle
 
 , pkg-config
@@ -78,7 +78,7 @@ rustPlatform.buildRustPackage rec {
     rustc
     husky
     pkg-config
-    makeWrapper
+    makeBinaryWrapper
   ];
 
   buildInputs= [
