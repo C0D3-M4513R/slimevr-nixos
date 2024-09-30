@@ -21,7 +21,6 @@ stdenv
 , webkitgtk_4_1
 
 , jdk
-, steam-run
 
 , eudev
 , libusb1
@@ -36,7 +35,7 @@ rustPlatform.buildRustPackage rec {
     repo = "SlimeVR-Server";
     fetchSubmodules = true;
     rev = "v" + version;
-    hash = "sha256-QGbhMUHrdI/+l6W1x+PIUP6Qz8/pfqjZJHtZcXv+8ZI=";
+    hash = "sha256-Q2N+oYQ1VgJ+XyBRhCPY4YVSNP6kiZ6ErPHS13XeVrE=";
    # populate values that require us to use git. By doing this in postFetch we
    # can delete .git afterwards and maintain better reproducibility of the src.
    leaveDotGit = true;
@@ -51,6 +50,14 @@ rustPlatform.buildRustPackage rec {
   .trim();
 " "const versionTag = \"v${version}\";" \
        --replace-fail "const gitClean = execSync('git status --porcelain').toString() ? false : true;" "const gitClean = true"
+
+      substituteInPlace $out/gui/src-tauri/src/util.rs \
+        --replace-fail "const VERSION: &str = if build::TAG.is_empty() {
+	build::SHORT_COMMIT
+} else {
+	build::TAG
+};" "const VERSION: &str = \"v${version}\";" \
+        --replace-fail 'const MODIFIED: &str = if build::GIT_CLEAN { "" } else { "-dirty" };' 'const MODIFIED: &str = "";' 
 
       find "$out" -name .git -print0 | xargs -0 rm -rf
     '';
