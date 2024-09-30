@@ -5,6 +5,7 @@ stdenv
 , fetchurl
 , autoPatchelfHook
 , makeBinaryWrapper
+, patchelf
 , gradle
 
 , pkg-config
@@ -21,9 +22,13 @@ stdenv
 , webkitgtk_4_1
 
 , jdk
-
+#slime-server libs
 , eudev
 , libusb1
+#rpath libs of gui
+, libayatana-appindicator
+, gst_all_1
+, gobject-introspection
 }:
 
 rustPlatform.buildRustPackage rec {
@@ -79,12 +84,19 @@ rustPlatform.buildRustPackage rec {
     husky
     pkg-config
     makeBinaryWrapper
+    autoPatchelfHook
   ];
 
   buildInputs= [
     glib
     gtk3.dev
     webkitgtk_4_1.dev
+
+    gobject-introspection
+    gst_all_1.gstreamer
+    gst_all_1.gst-plugins-base
+    gst_all_1.gst-plugins-good
+    gst_all_1.gst-plugins-bad
   ];
 
   pnpmDeps = pnpm.fetchDeps {
@@ -108,17 +120,27 @@ rustPlatform.buildRustPackage rec {
     cp ${src}/gui/src-tauri/dev.slimevr.SlimeVR.desktop $out/share/applications/
     sed -i $out/share/applications/dev.slimevr.SlimeVR.desktop -e "s|{{exec}}|$out/bin/slimevr|" -e "s|{{icon}}|$out/icon/icon.svg|"
   '';
-  
+
+  runtimeDependencies = [
+      libayatana-appindicator
+  ];
+
   postFixup = let 
     libraryPath = lib.makeLibraryPath [
       eudev
       libusb1
     ];
   in ''
+    #JAVA_HOME needs to be set for the gui to be able to launch the slime server. 
+    #Same for the --add-flags.
+    #The LD_LIBRARY_PATH is needed for the slime server to not crash when loading bundled hdapi libraries.
+    #We can't modify them right now, because the jar is signed.
+    #GST_PLUGIN_SYSTEM_PATH_1_0 is needed to hopefully fix the GStreamer plugins not being recognised.
     wrapProgram $out/bin/slimevr \
       --set-default JAVA_HOME "${jdk.home}" \
       --prefix LD_LIBRARY_PATH : ${libraryPath} \
-      --add-flags "--launch-from-path $out/jar"
+      --add-flags "--launch-from-path $out/jar" \
+      --prefix GST_PLUGIN_SYSTEM_PATH_1_0 : "$GST_PLUGIN_SYSTEM_PATH_1_0"
 
   '';
 
