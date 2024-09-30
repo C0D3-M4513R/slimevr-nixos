@@ -5,8 +5,7 @@ stdenv
 , fetchurl
 , autoPatchelfHook
 , makeBinaryWrapper
-, patchelf
-, gradle
+, wrapGAppsHook
 
 , pkg-config
 
@@ -85,6 +84,7 @@ rustPlatform.buildRustPackage rec {
     pkg-config
     makeBinaryWrapper
     autoPatchelfHook
+    wrapGAppsHook
   ];
 
   buildInputs= [
@@ -127,6 +127,8 @@ rustPlatform.buildRustPackage rec {
       libayatana-appindicator
   ];
 
+  dontWrapGApps = true;
+
   postFixup = let 
     libraryPath = lib.makeLibraryPath [
       eudev
@@ -142,8 +144,7 @@ rustPlatform.buildRustPackage rec {
       --set-default JAVA_HOME "${jdk.home}" \
       --prefix LD_LIBRARY_PATH : ${libraryPath} \
       --add-flags "--launch-from-path $out/jar" \
-      --prefix GST_PLUGIN_SYSTEM_PATH_1_0 : "$GST_PLUGIN_SYSTEM_PATH_1_0"
-
+      ''${gappsWrapperArgs[@]}
   '';
 
   meta = with lib; {
