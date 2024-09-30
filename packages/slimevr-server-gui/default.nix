@@ -2,10 +2,10 @@
 stdenv
 , lib
 , fetchFromGitHub
+, fetchurl
 , autoPatchelfHook
 , makeWrapper
 , gradle
-, jdk
 
 , pkg-config
 
@@ -19,6 +19,12 @@ stdenv
 , glib
 , gtk3
 , webkitgtk_4_1
+
+, jdk
+, steam-run
+
+, eudev
+, libusb1
 }:
 
 rustPlatform.buildRustPackage rec {
@@ -51,7 +57,12 @@ rustPlatform.buildRustPackage rec {
   };
 
   cargoHash = "sha256-VYBoCvsMeGazrnbKvFg4fXRGhMueqhK/vPLMv+aIHe0=";
- 
+
+  jar = fetchurl {
+    url = "https://github.com/SlimeVR/SlimeVR-Server/releases/download/v${version}/slimevr.jar";
+    hash = "sha256-Sj39D/QAR/lwojxsRcpe0k/21HC6R9mHPrj+H6s+qZA=";
+  };
+
   nativeBuildInputs = [
     nodejs
     pnpm.configHook
@@ -79,6 +90,24 @@ rustPlatform.buildRustPackage rec {
     pushd gui
     pnpm run build
     popd
+  '';
+
+  preInstall = ''
+    mkdir -p $out/jar
+    cp ${jar} $out/jar/slimevr.jar
+  '';
+  
+  postFixup = let 
+    libraryPath = lib.makeLibraryPath [
+      eudev
+      libusb1
+    ];
+  in ''
+    wrapProgram $out/bin/slimevr \
+      --set-default JAVA_HOME "${jdk.home}" \
+      --prefix LD_LIBRARY_PATH : ${libraryPath} \
+      --add-flags "--launch-from-path $out/jar"
+
   '';
 
   meta = with lib; {
