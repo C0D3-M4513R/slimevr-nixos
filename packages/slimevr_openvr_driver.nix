@@ -1,10 +1,6 @@
  { stdenv, lib
 , fetchurl
 , fetchFromGitHub
-, alsaLib
-, openssl
-, zlib
-, pulseaudio
 , autoPatchelfHook
 , pkg-config
 , cmake
@@ -39,10 +35,6 @@ stdenv.mkDerivation rec {
      openvr
      protobuf
      simdjson
-#    alsaLib
-#    openssl
-#    zlib
-#    pulseaudio
   ];
 
   env = {
