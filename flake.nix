@@ -18,7 +18,7 @@
     inputs@{ ... }:
     {
       nixosModules = {
-          packages = ./packages.nix;
+          packages = import ./packages.nix;
           default = packages;
       };
     };
