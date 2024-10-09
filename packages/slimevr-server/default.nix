@@ -67,7 +67,7 @@ rustPlatform.buildRustPackage rec {
     '';
   };
 
-  cargoHash = "sha256-VYBoCvsMeGazrnbKvFg4fXRGhMueqhK/vPLMv+aIHe0=";
+  cargoHash = "sha256-feIEKCKFvIUns5ttswdclMv0PCIHFSzSAtPum5IzYX8=";
 
   jar = fetchurl {
     url = "https://github.com/SlimeVR/SlimeVR-Server/releases/download/v${version}/slimevr.jar";
