@@ -31,7 +31,7 @@ stdenv
 }:
 
 rustPlatform.buildRustPackage rec {
-  pname = "slimevr-server-gui";
+  pname = "slimevr-server";
   version = "0.13.0";
 
   src = fetchFromGitHub {
@@ -67,7 +67,7 @@ rustPlatform.buildRustPackage rec {
     '';
   };
 
-  cargoHash = "sha256-VYBoCvsMeGazrnbKvFg4fXRGhMueqhK/vPLMv+aIHe0=";
+  cargoHash = "sha256-feIEKCKFvIUns5ttswdclMv0PCIHFSzSAtPum5IzYX8=";
 
   jar = fetchurl {
     url = "https://github.com/SlimeVR/SlimeVR-Server/releases/download/v${version}/slimevr.jar";
@@ -119,8 +119,6 @@ rustPlatform.buildRustPackage rec {
     cp ${src}/gui/src-tauri/icons/icon.svg $out/icon
     cp ${src}/gui/src-tauri/dev.slimevr.SlimeVR.desktop $out/share/applications/
     sed -i $out/share/applications/dev.slimevr.SlimeVR.desktop -e "s|{{exec}}|$out/bin/slimevr|" -e "s|{{icon}}|$out/icon/icon.svg|"
-    #FIXME: Without this, the slime gui just complains, that it doesn't have a valid java install.
-    sed -i $out/share/applications/dev.slimevr.SlimeVR.desktop -e "s|Terminal=false|Terminal=true|"
   '';
 
   runtimeDependencies = [
