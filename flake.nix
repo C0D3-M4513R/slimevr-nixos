@@ -15,7 +15,7 @@
       let pkgs = nixpkgs.legacyPackages.${system}; in
       {
         packages = rec {
-          slimevr-server-gui = pkgs.callPackage packages/slimevr-server-gui/default.nix {};
+          slimevr-server = pkgs.callPackage packages/slimevr-server/default.nix {};
           slimevr_feeder = pkgs.callPackage packages/slimevr_feeder.nix {};
           slimevr_openvr_driver = pkgs.callPackage packages/slimevr_openvr_driver.nix {};
         };

@@ -31,7 +31,7 @@ stdenv
 }:
 
 rustPlatform.buildRustPackage rec {
-  pname = "slimevr-server-gui";
+  pname = "slimevr-server";
   version = "0.13.0";
 
   src = fetchFromGitHub {
