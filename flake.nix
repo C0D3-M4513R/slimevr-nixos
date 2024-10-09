@@ -10,11 +10,14 @@
     utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { utils, ... }:
-    utils.lib.eachDefaultSystem (system: {
-      packages = rec {
-          packages = import ./packages.nix;
-          default = packages;
-      };
+  outputs = { utils, nixpkgs,... }:
+    utils.lib.eachDefaultSystem (system:
+      let pkgs = nixpkgs.legacyPackages.${system}; in
+      {
+        packages = rec {
+          slimevr-server-gui = pkgs.callPackage packages/slimevr-server-gui/default.nix {};
+          slimevr_feeder = pkgs.callPackage packages/slimevr_feeder.nix {};
+          slimevr_openvr_driver = pkgs.callPackage packages/slimevr_openvr_driver.nix {};
+        };
     });
 }
