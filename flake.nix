@@ -7,14 +7,14 @@
       url = github:edolstra/flake-compat;
       flake = true;
     };
+    utils.url = "github:numtide/flake-utils";
   };
 
-  outputs =
-    inputs@{ ... }:
-    {
-      nixosModules = rec {
+  outputs = { utils, ... }:
+    utils.lib.eachDefaultSystem (system: {
+      packages = rec {
           packages = import ./packages.nix;
           default = packages;
       };
-    };
+    });
 }
