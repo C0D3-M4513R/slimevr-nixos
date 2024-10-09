@@ -17,10 +17,9 @@
   outputs =
     inputs@{ ... }:
     {
-      nixosModules.default = {
-        imports = [
-          ./packages.nix
-        ];
+      nixosModules = {
+          packages = ./packages.nix;
+          default = packages;
       };
     };
 }
