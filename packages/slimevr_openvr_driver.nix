@@ -68,7 +68,12 @@ stdenv.mkDerivation rec {
     mkdir -p $out
     rm -rf $out/*
     install -Dm 755 libSlimeVR-OpenVR-Driver.so $out/libSlimeVR-OpenVR-Driver.so
-    install -Dm 755 driver/slimevr/bin/linux64/driver_slimevr.so $out/driver/slimevr/bin/linux64/driver_slimevr.so
+
+    cp -r driver $out/
+    cp -r $src/driver/* $out/driver
+    unlink $out/driver/slimevr/bin/win64/.gitkeep
+    rm -d $out/driver/slimevr/bin/win64 || true
+
     runHook postInstall
   '';
 
