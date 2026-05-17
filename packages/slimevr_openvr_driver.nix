@@ -14,14 +14,14 @@
 
 stdenv.mkDerivation rec {
   pname = "slimevr-openvr-driver";
-  version = "0.3.1";
+  version = "4.0.0";
 
   src = fetchFromGitHub {
     owner = "SlimeVR";
     repo = "SlimeVR-OpenVR-Driver";
     fetchSubmodules = true;
     rev = "v" + version;
-    hash = "sha256-1UXzG8Ey5fHCP4x48rRwE3G5u5xNSrHbUcpFOIPUnow";
+    hash = "sha256-nSxuhq5XSFx/vmZbvVXT8Zh7Hq6kpXv86poep8gwfVM=";
   };
 
   nativeBuildInputs = [
@@ -50,7 +50,7 @@ stdenv.mkDerivation rec {
 
   postPatch = ''
     # Fix protobuf
-    substituteInPlace src/VRDriver.cpp test/TestBridgeClientMock.cpp test/common/TestBridgeClient.cpp \
+    substituteInPlace src/VRDriver.cpp test/TestBridgeClientMock.cpp test/common/TestBridgeClient.cpp src/bridge/BridgeClient.cpp \
       --replace-fail 'CreateMessage<messages::' 'Create<messages::'
 
     #Use Nix OpenVr
